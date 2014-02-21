@@ -3,13 +3,12 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_multibuy_cart'
   s.version     = '2.1'
-  s.summary     = 'TODO: Add gem summary here'
-  s.description = 'TODO: Add (optional) gem description here'
+  s.summary     = 'Multibuy Cart Extension for Spree'
+  s.description = 'This extension modifies a store\'s cart to display all products and then only allows one to be selected at a time.'
+  s.authors     = ['Matthew Fenelon', 'Alex James']
+  s.email       = 'alex.james@200creative.com'
+  s.homepage    = 'http://200creative.com'
   s.required_ruby_version = '>= 2'
-
-  # s.author    = 'You'
-  # s.email     = 'you@example.com'
-  # s.homepage  = 'http://www.spreecommerce.com'
 
   #s.files       = `git ls-files`.split("\n")
   #s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
