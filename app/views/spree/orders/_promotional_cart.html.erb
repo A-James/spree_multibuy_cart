@@ -1,0 +1,48 @@
+<div data-hook="outside_cart_form">
+  <%= form_for @order, :url => update_cart_path, :html => {:id => 'update-cart'} do |order_form| %>
+    <div data-hook="inside_cart_form">
+
+      <div data-hook="cart_items">
+        <ul id="products" class="inline product-listing" data-hook>
+          <% @products.each do |product| %>
+            <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary", :name => "classes") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
+              <%= radio_button_tag 'product', product.id %>
+              <div class="product-image">
+                <%= link_to small_image(product, :itemprop => "image"), product, :itemprop => 'url' %>
+              </div>
+              <%= link_to truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name %>
+              <span class="price selling" itemprop="price"><%= display_price(product) %></span>
+            </li>
+          <% end %>
+          <% reset_cycle("classes") %>
+        </ul>
+      </div>
+
+      <div id="subtotal" data-hook class="well col-md-12 text-right">
+        <%= Spree.t(:subtotal) %>: <span class="lead text-primary order-total"><%= @order.display_total.to_html %> 
+      </div>
+
+      <div class="links col-md-6 navbar-form pull-right text-right" data-hook="cart_buttons">
+        <div class="form-group">
+        <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline" %></div>
+        <%= button_tag :class => 'btn btn-primary', :id => 'update-button' do %>
+          <%= Spree.t(:update) %>
+        <% end %>
+        <%= button_tag :class => 'btn btn-lg btn-success', :id => 'checkout-link', :name => 'checkout' do %>
+          <span class="glyphicon glyphicon-lock"></span> <%= Spree.t(:checkout) %>
+        <% end %>
+        <br/>Shipped Fast Today!
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div id="empty-cart" class="col-md-6 pull-left" data-hook>
+  <%= form_tag empty_cart_path, :method => :put do %>
+    <p id="clear_cart_link" data-hook>
+      <%= submit_tag Spree.t(:empty_cart), :class => 'btn btn-default' %>
+      <%= Spree.t(:or) %>
+      <%= link_to Spree.t(:continue_shopping), products_path, :class => 'continue' %>
+    </p>
+  <% end %>
+</div>
