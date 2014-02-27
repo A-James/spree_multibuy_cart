@@ -45,5 +45,6 @@ Spree::OrdersController.class_eval do
         searcher_params = {:per_page => 50, :page => 1}
         searcher = build_searcher(searcher_params)
         @products = searcher.retrieve_products
+        @selected_variant = @order.line_items.any? ? @order.line_items.take().variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).take
     end
 end
