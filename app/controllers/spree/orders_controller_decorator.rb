@@ -22,9 +22,13 @@ Spree::OrdersController.class_eval do
                     @order.ensure_updated_shipments
 
                     fire_event('spree.cart.add')
-                end
 
-                line_item = @order.line_items.detect { |line_item| line_item.variant_id == variant_id } 
+                    line_item = @order.line_items.detect { |line_item| line_item.variant_id == variant_id }
+                else
+                    logger.debug "Failed to add product variant:#{variant_id} to the order"
+                    flash[:error] = populator.errors.full_messages.join(" ")
+                    redirect_to cart_path and return
+                end
             end
 
             params[:order] = {:line_items_attributes =>
