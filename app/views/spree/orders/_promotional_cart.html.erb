@@ -16,6 +16,8 @@
           <% end %>
           <% reset_cycle("classes") %>
         </ul>
+
+        <%= render :partial => 'form', :locals => { :order_form => order_form } %>
       </div>
 
       <div id="subtotal" data-hook class="well col-md-12 text-right">

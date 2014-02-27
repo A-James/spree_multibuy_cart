@@ -22,8 +22,6 @@ Spree::OrdersController.class_eval do
                     @order.ensure_updated_shipments
 
                     fire_event('spree.cart.add')
-
-                    line_item = @order.line_items.detect { |line_item| line_item.variant_id == variant_id }
                 else
                     logger.debug "Failed to add product variant:#{variant_id} to the order"
                     flash[:error] = populator.errors.full_messages.join(" ")
@@ -32,10 +30,12 @@ Spree::OrdersController.class_eval do
             end
 
             params[:order] = {:line_items_attributes =>
-                @order.line_items.map { |li| {:id => li.id, :quantity => li.variant_id == variant_id ? "1" : "0"} }
+                @order.line_items.map { |li| {:id => li.id, :quantity => li.variant_id == variant_id ? "1" : "0"} },
+                :coupon_code => params[:order][:coupon_code]
             }
         end
 
+        logger.debug "Calling original update method with Parameters: #{params}"
         update_original
     end
 
