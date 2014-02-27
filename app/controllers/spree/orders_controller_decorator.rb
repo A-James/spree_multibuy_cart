@@ -13,7 +13,7 @@ Spree::OrdersController.class_eval do
             line_item = @order.line_items.detect { |line_item| line_item.variant_id == variant_id }
 
             if line_item.blank?
-                logger.debug "product not found in order, populating the order with the product - #{variant_id}"
+                logger.debug "Adding product variant:#{variant_id} to the order"
                 quantity = 1
                 populate_params = {:variants => {variant_id => quantity}}
 
