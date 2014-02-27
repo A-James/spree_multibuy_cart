@@ -10,7 +10,7 @@
               <div class="product-image">
                 <%= link_to small_image(product, :itemprop => "image"), product, :itemprop => 'url' %>
               </div>
-              <%= link_to truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name %>
+              <%= label_tag "product_#{product.master.id}", link_to(truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name) %>
               <span class="price selling" itemprop="price"><%= display_price(product) %></span>
             </li>
           <% end %>
