@@ -6,8 +6,9 @@ Gem::Specification.new do |s|
   s.summary     = 'Multibuy Cart Extension for Spree'
   s.description = 'This extension modifies a store\'s cart to display all products and then only allows one to be selected at a time.'
   s.authors     = ['Matthew Fenelon', 'Alex James']
-  s.email       = 'alex.james@200creative.com'
+  s.email       = ['matthew.fenelon@200creative.com', 'alex.james@200creative.com']
   s.homepage    = 'http://200creative.com'
+  s.license     = 'LGPL-3.0'
   s.required_ruby_version = '>= 2'
 
   #s.files       = `git ls-files`.split("\n")
