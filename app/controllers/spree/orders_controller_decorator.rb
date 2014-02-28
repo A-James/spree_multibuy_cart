@@ -44,11 +44,18 @@ Spree::OrdersController.class_eval do
 
         @selected_variant = @order.line_items.any? ? @order.line_items.take().variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).take
         
-        variant_cost = @selected_variant.price_in(current_currency).amount
-        @order_total = Spree::Money.new((@order.total - @order.item_total) + variant_cost, { currency: current_currency })
+        @order_total = calculate_order_total_with_variant(@order, @selected_variant, current_currency)
 
         searcher_params = {:per_page => 50, :page => 1}
         searcher = build_searcher(searcher_params)
-        @products = searcher.retrieve_products
+        @products_and_totals = searcher.retrieve_products.map { |p| {product: p, order_total: calculate_order_total_with_variant(@order, p.master, current_currency)} }
     end
+
+    private
+
+        def calculate_order_total_with_variant(order, variant, currency)
+            variant_cost = variant.price_in(currency).amount
+            order_total = Spree::Money.new((order.total - order.item_total) + variant_cost, { currency: currency })
+            return order_total
+        end
 end

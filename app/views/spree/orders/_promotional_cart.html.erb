@@ -4,7 +4,8 @@
 
       <div data-hook="cart_items">
         <ul id="products" class="inline product-listing" data-hook>
-          <% @products.each do |product| %>
+          <% @products_and_totals.each do |product_and_total| %>
+            <% product = product_and_total[:product] %>
             <li id="product_<%= product.id %>" class="columns three <%= cycle("alpha", "secondary", "", "omega secondary", :name => "classes") %>" data-hook="products_list_item" itemscope itemtype="http://schema.org/Product">
               <%= radio_button_tag :product, product.master.id, product.master == @selected_variant %>
               <div class="product-image">
@@ -12,6 +13,7 @@
               </div>
               <%= label_tag "product_#{product.master.id}", link_to(truncate(product.name, :length => 50), product, :class => 'info', :itemprop => "name", :title => product.name) %>
               <span class="price selling" itemprop="price"><%= display_price(product) %></span>
+              <span class="product-order-total"><%= product_and_total[:order_total].to_html %></span>
             </li>
           <% end %>
           <% reset_cycle("classes") %>
