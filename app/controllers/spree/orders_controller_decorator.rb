@@ -6,33 +6,8 @@ Spree::OrdersController.class_eval do
     alias_method :update_original, :update
 
     def update
-        if params[:product]
-            @order = current_order(create_order_if_necessary: true)
-            variant_id = params[:product].to_i
-
-            line_item = @order.line_items.detect { |line_item| line_item.variant_id == variant_id }
-
-            if line_item.blank?
-                logger.debug "Adding product variant:#{variant_id} to the order"
-                quantity = 1
-                populate_params = {:variants => {variant_id => quantity}}
-
-                populator = Spree::OrderPopulator.new(@order, current_currency)
-                if populator.populate(populate_params)
-                    @order.ensure_updated_shipments
-
-                    fire_event('spree.cart.add')
-                else
-                    logger.debug "Failed to add product variant:#{variant_id} to the order"
-                    flash[:error] = populator.errors.full_messages.join(" ")
-                    redirect_to cart_path and return
-                end
-            end
-
-            params[:order] = {:line_items_attributes =>
-                @order.line_items.map { |li| {:id => li.id, :quantity => li.variant_id == variant_id ? "1" : "0"} },
-                :coupon_code => params[:order][:coupon_code]
-            }
+        if process_selected_product(params) == false 
+            return
         end
 
         logger.debug "Calling original update method with Parameters: #{params}"
@@ -42,18 +17,72 @@ Spree::OrdersController.class_eval do
     def edit
         edit_original
 
-        @selected_variant = @order.line_items.any? ? @order.line_items.take().variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).take
+        selected_variant = selected_variant_or_default @order
         
-        @order_total = calculate_order_total_with_variant(@order, @selected_variant, current_currency)
+        @order_total = calculate_order_total_for_variant(@order, selected_variant, current_currency)
 
         searcher_params = {:per_page => 50, :page => 1}
         searcher = build_searcher(searcher_params)
-        @products_and_totals = searcher.retrieve_products.map { |p| {product: p, order_total: calculate_order_total_with_variant(@order, p.master, current_currency)} }
+        @products_and_totals = searcher.retrieve_products.map { |p| {product: p, selected: selected_variant == p.master, order_total: calculate_order_total_for_variant(@order, p.master, current_currency)} }
     end
 
     private
+        def process_selected_product(params)
+            if params[:product] == nil
+                return true
+            end
 
-        def calculate_order_total_with_variant(order, variant, currency)
+            variant_id = params[:product].to_i
+
+            @order = current_order(create_order_if_necessary: true)
+
+            if add_variant_to_order_if_not_in_order(variant_id, @order) == false
+                return
+            end
+
+            ensure_order_only_contains_variant(params, @order, variant_id)
+
+            return true
+        end
+
+        def add_variant_to_order_if_not_in_order(variant_id, order)
+            if order.find_line_item_by_variant_id(variant_id).blank?
+                return add_variant_to_order(variant_id, order)
+            end
+        end
+
+        def add_variant_to_order(variant_id, order)
+            logger.debug "Adding product variant:#{variant_id} to the order"
+            quantity = 1
+            populate_params = {:variants => {variant_id => quantity}}
+
+            populator = Spree::OrderPopulator.new(order, current_currency)
+            if populator.populate(populate_params)
+                order.ensure_updated_shipments
+
+                fire_event('spree.cart.add')
+            else
+                logger.debug "Failed to add product variant:#{variant_id} to the order"
+                flash[:error] = populator.errors.full_messages.join(" ")
+                redirect_to cart_path and return false
+            end
+
+            return true
+        end
+
+        def ensure_order_only_contains_variant(params, order, variant_id)
+            # Change the parameters so that all line items have a quantity of 0, except for the variant.
+            params[:order] = {:line_items_attributes =>
+                order.line_items.map { |li| {:id => li.id, :quantity => li.variant_id == variant_id ? "1" : "0"} },
+                :coupon_code => params[:order][:coupon_code]
+            }
+        end
+
+        def selected_variant_or_default(order)
+            order.line_items.any? ? order.line_items.take().variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).take
+        end
+
+        def calculate_order_total_for_variant(order, variant, currency)
             variant_cost = variant.price_in(currency).amount
             order_total = Spree::Money.new((order.total - order.item_total) + variant_cost, { currency: currency })
             return order_total
