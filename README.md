@@ -1,7 +1,7 @@
-SpreeMultibuyCart
+spree_multibuy_cart
 =================
 
-Introduction goes here.
+This extension modifies a store's cart to display all products and then only allows one to be selected at a time.
 
 Installation
 ------------
@@ -12,29 +12,10 @@ Add spree_multibuy_cart to your Gemfile:
 gem 'spree_multibuy_cart'
 ```
 
-Bundle your dependencies and run the installation generator:
+Bundle your dependencies:
 
 ```shell
 bundle
-bundle exec rails g spree_multibuy_cart:install
 ```
 
-Testing
--------
-
-Be sure to bundle your dependencies and then create a dummy test app for the specs to run against.
-
-```shell
-bundle
-bundle exec rake test_app
-bundle exec rspec spec
-```
-
-When testing your applications integration with this extension you may use it's factories.
-Simply add this require statement to your spec_helper:
-
-```ruby
-require 'spree_multibuy_cart/factories'
-```
-
-Copyright (c) 2014 [name of extension creator], released under the New BSD License
+Copyright (c) 2014 200Creative, released under the LGPLv3 licence
