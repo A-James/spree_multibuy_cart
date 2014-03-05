@@ -23,7 +23,7 @@ Spree::OrdersController.class_eval do
 
         searcher_params = {:per_page => 50, :page => 1}
         searcher = build_searcher(searcher_params)
-        @products_and_totals = searcher.retrieve_products.map { |p| {product: p, selected: selected_variant == p.master, order_total: calculate_order_total_for_variant(@order, p.master, current_currency)} }
+        @products_and_totals = searcher.retrieve_products.map { |p| {product: p, selected: selected_variant == p.master, order_total: calculate_order_total_for_variant(@order, p.master, current_currency), per_item_price: calculate_per_item_price(p, current_currency)} }
     end
 
     private
@@ -86,5 +86,14 @@ Spree::OrdersController.class_eval do
             variant_cost = variant.price_in(currency).amount
             order_total = Spree::Money.new((order.total - order.item_total) + variant_cost, { currency: currency })
             return order_total
+        end
+
+        def calculate_per_item_price(product, currency)
+            items_per_product = product.property('totalNumber').to_i
+            if !items_per_product || items_per_product == 0
+                items_per_product = 1
+            end 
+            per_item_cost = product.master.price_in(currency).amount / items_per_product 
+            return Spree::Money.new(per_item_cost, { currency: currency, no_cents: false })
         end
 end
