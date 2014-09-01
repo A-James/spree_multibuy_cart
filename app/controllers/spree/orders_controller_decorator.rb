@@ -6,7 +6,7 @@ Spree::OrdersController.class_eval do
     alias_method :update_original, :update
 
     def update
-        if process_selected_product(params) == false 
+        if process_selected_product(params) == false
             return
         end
 
@@ -18,7 +18,7 @@ Spree::OrdersController.class_eval do
         edit_original
 
         selected_variant = selected_variant_or_default @order
-        
+
         @order_total = calculate_order_total_for_variant(@order, selected_variant, current_currency)
 
         searcher_params = {:per_page => 50, :page => 1}
@@ -92,8 +92,8 @@ Spree::OrdersController.class_eval do
             items_per_product = product.property('totalNumber').to_i
             if !items_per_product || items_per_product == 0
                 items_per_product = 1
-            end 
-            per_item_cost = product.master.price_in(currency).amount / items_per_product 
+            end
+            per_item_cost = product.master.price_in(currency).amount / items_per_product
             return Spree::Money.new(per_item_cost, { currency: currency, no_cents: false })
         end
 end
