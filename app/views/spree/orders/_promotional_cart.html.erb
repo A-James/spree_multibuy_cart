@@ -11,13 +11,9 @@
               <%= label_tag "product_#{product.master.id}", truncate(product.name, :length => 50), :class => 'info', :itemprop => "name", :title => product.name %>
 
               <span><%= product.description %></span>
-              <span><%= product.property("totalNumber") %> <%= Spree.t(:in_bundle) %> (<%= Spree.t(:just_each, :price => product_and_total[:per_item_price]) %>)</span> 
+              <span><%= product.property("totalNumber") %> <%= Spree.t(:in_bundle) %> </span> 
 
-              <h2 class="price selling pull-right" itemprop="price"><%= display_price(product) %></h2>
-
-              <div class="product-image">
-                <%= small_image(product, :itemprop => "image") %>
-              </div>
+              <h2 class="price selling pull-right" itemprop="price"><%= display_price(product) %> (<%= Spree.t(:just_each, :price => product_and_total[:per_item_price]) %>)</h2>
               
               <span class="hidden" id="product-order-total"><%= product_and_total[:order_total].to_html %></span>
             </div>
