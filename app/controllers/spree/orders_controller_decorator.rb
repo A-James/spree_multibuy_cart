@@ -6,27 +6,38 @@ Spree::OrdersController.class_eval do
     alias_method :update_original, :update
 
     def update
-        if process_selected_product(params) == false
-            return
-        end
+      if process_selected_product(params) == false
+        return
+      end
 
-        logger.debug "Calling original update method with Parameters: #{params}"
-        update_original
+      logger.debug "Calling original update method with Parameters: #{params}"
+
+      @order = current_order(lock: true)
+
+      # If this is not called before the original update method, the view's
+      # variables won't be set before update_original renders the view.
+      load_view_variables
+
+      update_original
     end
 
     def edit
-        edit_original
+      @order = current_order || Order.new
+      load_view_variables
+      edit_original
+    end
 
-        selected_variant = selected_variant_or_default @order
+    private
+      def load_view_variables
+        selected_variant = selected_variant_or_default(@order)
 
         @order_total = calculate_order_total_for_variant(@order, selected_variant, current_currency)
 
         searcher_params = {:per_page => 50, :page => 1}
         searcher = build_searcher(searcher_params)
         @products_and_totals = searcher.retrieve_products.ascend_by_master_price.map { |p| {product: p, selected: selected_variant == p.master, order_total: calculate_order_total_for_variant(@order, p.master, current_currency), per_item_price: calculate_per_item_price(p, current_currency)} }
-    end
+      end
 
-    private
       def process_selected_product(params)
           if params[:product] == nil
               return true
@@ -79,7 +90,7 @@ Spree::OrdersController.class_eval do
       end
 
       def selected_variant_or_default(order)
-          order.line_items.any? ? order.line_items.take().variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).take
+          order.line_items.any? ? order.line_items.first.variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).first
       end
 
       def calculate_order_total_for_variant(order, variant, currency)
