@@ -22,7 +22,7 @@ Spree::OrdersController.class_eval do
     end
 
     def edit
-      @order = current_order || Order.new
+      @order = current_order || Spree::Order.new
       load_view_variables
       edit_original
     end
