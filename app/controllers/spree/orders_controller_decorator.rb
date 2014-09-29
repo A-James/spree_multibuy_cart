@@ -35,7 +35,16 @@ Spree::OrdersController.class_eval do
 
         searcher_params = {:per_page => 50, :page => 1}
         searcher = build_searcher(searcher_params)
-        @products_and_totals = searcher.retrieve_products.descend_by_master_price.map { |p| {product: p, selected: selected_variant == p.master, order_total: calculate_order_total_for_variant(@order, p.master, current_currency), per_item_price: calculate_per_item_price(p, current_currency)} }
+        @products_and_totals = searcher
+          .retrieve_products
+          .descend_by_master_price
+          .map { |p| {
+              product: p,
+              selected: selected_variant == p.master,
+              order_total: calculate_order_total_for_variant(@order, p.master, current_currency),
+              per_item_price: calculate_per_item_price(p, current_currency)
+            }
+          }
       end
 
       def process_selected_product(params)
