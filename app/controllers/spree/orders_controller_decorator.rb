@@ -99,7 +99,7 @@ Spree::OrdersController.class_eval do
       end
 
       def selected_variant_or_default(order)
-          order.line_items.any? ? order.line_items.first.variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).first
+        order.line_items.any? ? order.line_items.first.variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).first
       end
 
       def calculate_order_total_for_variant(order, variant, currency)
