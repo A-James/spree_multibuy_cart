@@ -114,6 +114,6 @@ Spree::OrdersController.class_eval do
             items_per_product = 1
         end
         per_item_cost = product.master.price_in(currency).amount / items_per_product
-        return Spree::Money.new(per_item_cost, { currency: currency, no_cents: false })
+        return Spree::Money.new(per_item_cost, { currency: currency, no_cents: false, no_cents_if_whole: true })
       end
 end
