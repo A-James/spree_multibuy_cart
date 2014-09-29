@@ -104,7 +104,7 @@ Spree::OrdersController.class_eval do
 
       def calculate_order_total_for_variant(order, variant, currency)
         variant_cost = variant.price_in(currency).amount
-        order_total = Spree::Money.new((order.total - order.item_total) + variant_cost, { currency: currency })
+        order_total = Spree::Money.new(variant_cost, { currency: currency })
         return order_total
       end
 
