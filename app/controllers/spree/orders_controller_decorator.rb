@@ -35,7 +35,16 @@ Spree::OrdersController.class_eval do
 
         searcher_params = {:per_page => 50, :page => 1}
         searcher = build_searcher(searcher_params)
-        @products_and_totals = searcher.retrieve_products.descend_by_master_price.map { |p| {product: p, selected: selected_variant == p.master, order_total: calculate_order_total_for_variant(@order, p.master, current_currency), per_item_price: calculate_per_item_price(p, current_currency)} }
+        @products_and_totals = searcher
+          .retrieve_products
+          .descend_by_master_price
+          .map { |p| {
+              product: p,
+              selected: selected_variant == p.master,
+              order_total: calculate_order_total_for_variant(@order, p.master, current_currency),
+              per_item_price: calculate_per_item_price(p, current_currency)
+            }
+          }
       end
 
       def process_selected_product(params)
@@ -90,12 +99,12 @@ Spree::OrdersController.class_eval do
       end
 
       def selected_variant_or_default(order)
-          order.line_items.any? ? order.line_items.first.variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).first
+        order.line_items.any? ? order.line_items.first.variant : Spree::Variant.where(sku: Spree::Config[:default_item_sku]).first
       end
 
       def calculate_order_total_for_variant(order, variant, currency)
         variant_cost = variant.price_in(currency).amount
-        order_total = Spree::Money.new((order.total - order.item_total) + variant_cost, { currency: currency })
+        order_total = Spree::Money.new(variant_cost, { currency: currency })
         return order_total
       end
 
@@ -105,6 +114,6 @@ Spree::OrdersController.class_eval do
             items_per_product = 1
         end
         per_item_cost = product.master.price_in(currency).amount / items_per_product
-        return Spree::Money.new(per_item_cost, { currency: currency, no_cents: false })
+        return Spree::Money.new(per_item_cost, { currency: currency, no_cents: false, no_cents_if_whole: true })
       end
 end
