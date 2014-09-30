@@ -1,5 +1,23 @@
 <div data-hook="outside_cart_form">
   <%= form_for @order, :url => update_cart_path, method: :patch, :html => {:id => 'update-cart'} do |order_form| %>
+
+    <div class="clearfix">
+      <div class="links col-md-6 navbar-form pull-right text-right" data-hook="cart_buttons">
+        <div class="form-group">
+        <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline" %></div>
+        <%= button_tag :class => 'btn btn-primary', :id => 'update-button' do %>
+          <%= Spree.t(:update) %>
+        <% end %>
+        <%= button_tag :class => 'btn btn-lg btn-success', :id => 'checkout-link', :name => 'checkout' do %>
+          <span class="glyphicon glyphicon-lock"></span> <%= Spree.t(:checkout) %>
+        <% end %>
+        <br/>Shipped Fast Today!
+      </div>
+      <div id="subtotal" data-hook class="well col-md-12 text-right">
+        <%= Spree.t(:subtotal) %>: <span class="lead text-primary order-total"><%= @order_total.to_html %> 
+      </div>
+    </div>
+
     <div data-hook="inside_cart_form">
 
       <div data-hook="cart_items">
@@ -25,21 +43,6 @@
         <% end %>
       </div>
 
-      <div id="subtotal" data-hook class="well col-md-12 text-right">
-        <%= Spree.t(:subtotal) %>: <span class="lead text-primary order-total"><%= @order_total.to_html %> 
-      </div>
-
-      <div class="links col-md-6 navbar-form pull-right text-right" data-hook="cart_buttons">
-        <div class="form-group">
-        <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline" %></div>
-        <%= button_tag :class => 'btn btn-primary', :id => 'update-button' do %>
-          <%= Spree.t(:update) %>
-        <% end %>
-        <%= button_tag :class => 'btn btn-lg btn-success', :id => 'checkout-link', :name => 'checkout' do %>
-          <span class="glyphicon glyphicon-lock"></span> <%= Spree.t(:checkout) %>
-        <% end %>
-        <br/>Shipped Fast Today!
-      </div>
     </div>
   <% end %>
 </div>
