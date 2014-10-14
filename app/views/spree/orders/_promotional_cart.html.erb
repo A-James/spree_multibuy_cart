@@ -24,10 +24,10 @@
               <%= label_tag "product_#{product.master.id}", truncate(product.name, :length => 50), :class => 'info', :itemprop => "name", :title => product.name %>
 
               <span><%= product.description %></span>
-              <span><%= product.property("totalNumber") %> <%= Spree.t(:in_bundle) %> </span> 
+              <span><%= product.property("totalNumber") %> <%= Spree.t(:in_bundle) %> </span>
 
-              <h2 class="price selling pull-right" itemprop="price"><%= display_price(product) %> (<%= Spree.t(:just_each, :price => product_and_total[:per_item_price]) %>)</h2>
-              
+              <h2 class="price selling pull-right" itemprop="price"><%= money_to_html(product.price_in(current_currency).display_price) %> (<%= raw Spree.t(:just_each, :price => money_to_html(product_and_total[:per_item_price])) %>)</h2>
+
               <span class="hidden" id="product-order-total"><%= product_and_total[:order_total].to_html %></span>
             </div>
           <% end %>
@@ -43,7 +43,7 @@
     <div class="clearfix">
 
       <div id="subtotal" data-hook class="well col-md-12 text-right">
-        <%= Spree.t(:subtotal) %>: <span class="lead text-primary order-total"><%= @order_total.to_html %> 
+        <%= Spree.t(:subtotal) %>: <span class="lead text-primary order-total"><%= @order_total.to_html %>
       </div>
 
       <div class="form-group">

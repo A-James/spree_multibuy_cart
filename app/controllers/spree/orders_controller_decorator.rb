@@ -27,6 +27,11 @@ Spree::OrdersController.class_eval do
       edit_original
     end
 
+    helper_method :money_to_html
+    def money_to_html(money)
+      money.to_html().gsub(/(\d)(\.\d+)/, '\1<sup>\2</sup>')
+    end
+
     private
       def load_view_variables
         selected_variant = selected_variant_or_default(@order)
