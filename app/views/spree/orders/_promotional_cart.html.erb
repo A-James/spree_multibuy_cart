@@ -5,9 +5,8 @@
 
         <div class="form-group">
           <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline hidden" %>
-        <%= button_tag :class => 'btn btn-lg btn-success pull-right checkout', :id => 'checkout-link', :name => 'checkout' do %>
-          <span class="glyphicon glyphicon-lock"></span> <%= Spree.t(:checkout) %>
-        <% end %>
+       
+
 
     </div>
 
@@ -29,13 +28,23 @@
               <h2 class="price selling pull-right" itemprop="price"><%= display_price(product) %> (<%= Spree.t(:just_each, :price => product_and_total[:per_item_price]) %>)</h2>
               
               <span class="hidden" id="product-order-total"><%= product_and_total[:order_total].to_html %></span>
+
+
+                <%= button_tag :class => 'btn btn-lg btn-success pull-right checkout', :id => 'checkout-link', :name => 'checkout' do %>
+                  <span class="glyphicon glyphicon-lock"></span> <%= Spree.t(:checkout) %>
+                <% end %>
+
+
             </div>
+
+
           <% end %>
           <% reset_cycle("classes") %>
 
         <% if @order.line_item_adjustments.any? %>
           <%= render :partial => 'form', :locals => { :order_form => order_form } %>
         <% end %>
+
       </div>
 
     </div>
@@ -43,14 +52,10 @@
     <div class="clearfix">
 
       <div id="subtotal" data-hook class="well col-md-12 text-right">
-        <%= Spree.t(:subtotal) %>: <span class="lead text-primary order-total"><%= @order_total.to_html %> 
+        <%= Spree.t(:subtotal) %>: <span class="lead text-primary order-total"><%= @order_total.to_html %>
       </div>
 
-      <div class="form-group">
-        <%= button_tag :class => 'btn btn-lg btn-success pull-right checkout', :id => 'checkout-link', :name => 'checkout' do %>
-          <span class="glyphicon glyphicon-lock"></span> <%= Spree.t(:checkout) %>
-        <% end %>
-      </div>
+
 
     </div>
 
