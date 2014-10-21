@@ -26,7 +26,7 @@
               <span><%= product.description %></span>
               <span><%= product.property("totalNumber") %> <%= Spree.t(:in_bundle) %> </span>
 
-              <h2 class="price selling pull-right text-right" itemprop="price"><%= money_to_html(product.price_in(current_currency).display_price) %><%= Spree.t(:get_x_discount, discount_percent: product.property('discount').to_i) unless product.property('discount').to_i == 0 %>
+              <h2 class="price selling pull-right text-right" itemprop="price"><%= money_to_html(product.price_in(current_currency).display_price) %><%= Spree.t(:plus_x_shipping, cost: product.property('shippingCharge').to_i) if product.property('shippingCharge').to_i > 0 %><%= Spree.t(:get_x_discount, discount_percent: product.property('discount').to_i) unless product.property('discount').to_i == 0 %>
               <br />
               <small><%= raw Spree.t(:just_each, :price => money_to_html(product_and_total[:per_item_price])) %></small></h2>
 
