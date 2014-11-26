@@ -5,8 +5,6 @@
 
         <div class="form-group">
           <%= order_form.text_field :coupon_code, :size => 10, :placeholder => Spree.t(:coupon_code), class: "form-control form-control-inline hidden" %>
-       
-
 
     </div>
 
@@ -29,7 +27,11 @@
               <span>
                 <%= Spree.t(:get_x_discount, discount_percent: product.property('discount').to_i) unless product.property('discount').to_i == 0 %> <%= raw Spree.t(:price_per_bottle, :price => money_to_html(product_and_total[:per_item_price])) %><br/>
               </span>
-                <small>Just <%= raw money_to_html(product.price_in(current_currency).display_price) %><%= Spree.t(:plus_x_shipping, cost: product.property('shippingCharge').to_i) if product.property('shippingCharge').to_i > 0 %></small>
+                <small>Just <%= raw money_to_html(product.price_in(current_currency).display_price) %><% if product.property('shippingCharge').to_i > 0 %>
+  <%= Spree.t(:plus_x_shipping, cost: product.property('shippingCharge').to_i) %>
+<% else %>
+ + FREE shipping
+<% end %></small>
 
               </h2>
 
@@ -40,6 +42,9 @@
                   <span class="glyphicon glyphicon-lock"></span> <%= Spree.t(:checkout) %>
                 <% end %>
 
+
+                <%= button_tag :class => 'checkout', :id => 'checkout-link-cover', :name => 'checkout' do %>
+                <% end %>
 
             </div>
 
